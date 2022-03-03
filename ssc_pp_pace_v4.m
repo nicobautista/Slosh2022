@@ -10,12 +10,16 @@
 %not have much of an effect. 
 
 %run this section once at beginning
-close all;clear;clc;
+clear all
+close all
+clc
+
 single_idx = 12;
-prefixfilename='C:\Users\nicob\Downloads\Tank\2022\FinalData\';
-csvarray={	'Fx_pos_1.csv','Fx_neg_1.csv','Fy_pos_1.csv','Fy_neg_1.csv',...
-			'Fz_pos_1.csv','Fz_neg_1.csv','Tx_pos_1.csv','Tx_neg_1.csv',...
-			'Ty_pos_1.csv','Ty_neg_1.csv','Tz_pos_1.csv','Tz_neg_1.csv'};
+
+prefixfilename='C:\Users\Lab 116\Desktop\PACE Calibration\CSVs\';
+csvarray={'Fx_pos_1.csv','Fx_neg_1.csv','Fy_pos_1.csv','Fy_neg_1.csv',...
+    'Fz_pos_1.csv','Fz_neg_1.csv','Tx_pos_1.csv','Tx_neg_1.csv',...
+    'Ty_pos_1.csv','Ty_neg_1.csv','Tz_pos_1.csv','Tz_neg_1.csv'};
 
 %scale factor corrections for each file. Only necessary if mess up the
 %scale factor entry in the Labview (which multiplies by the
@@ -38,7 +42,7 @@ sflc1=100; %lbf/V
 sflc2=100; %lbf/V
 sflc1N=sflc1*4.44822; %N/V
 sflc2N=sflc1N; %N/V
-inversingFlag = [-1,1,-1;-1,-1,-1;1,1,1]; %3 axis - 3 sensors [x_1,x_2,x_3;y_1,y_2,y_3;z_1,z_2,z_3]
+
 %Fx's, Fy's, Tz's used weights, so are step ups. Fz's, Tx's, and Ty's used
 %the crane, so are step downs. The step downs will need to have sign
 %negated. Cannot mix currently, i.e. can't use weights for +Fz and crane
@@ -53,26 +57,24 @@ calsensorflag=[2,2,2,2,2,2,3,3,3,3,3,3]; %1: CalLC 1, 2: CalLC 2, 3: Both CalLC'
 phaseshift=0; %300; %subtract from all force sensor start and end pts
 
 %% Read in all data section
-for kk=1:12
-% kk = single_idx;
+%Run this section repeatedly for different kk's
+
+%can't really automate this because don't know the start and end points. 
+for kk=1:1:12
+% kk=single_idx;
     % import data file
     filename = [prefixfilename,csvarray{kk}];
     Ftable=importdata1(filename);
-	idxArray = (0:1:height(Ftable)-1);
     %remove variables not relevant to static system calibration
     Ftable = removevars(Ftable,{'time','Baffle1','Baffle2','Baffle3','Baffle4','Baffle5','Baffle6','PositionSensor','Accelerometer','PressureTransducer','Fx','Fy','Fz','Tx','Ty','Tz'});
     temp=table2array(Ftable);
     %force sensors only. rearrange to [Fx1,Fx2,Fx3,Fy1,Fy2,Fy3,Fz1,Fz2,Fz3].
     %Different columns, different axes vs. time. 
-    Ftablefs{kk}=[-1*temp(:,1),temp(:,4),-1*temp(:,7),-1*temp(:,2),-1*temp(:,5),-1*temp(:,8),temp(:,3),temp(:,6),temp(:,9)];
+    Ftablefs{kk}=[temp(:,1),temp(:,4),temp(:,7),temp(:,2),temp(:,5),temp(:,8),temp(:,3),temp(:,6),temp(:,9)];
     %calibration load cells only. [CS1,CS2]. Different columns, different load cells vs. time.
     FtableCS{kk}=table2array(Ftable(:,10:11)); 
-%     clear Ftable temp
-% 	std_arr = zeros(1,length(FtableCS{kk}));
-% 	number_of_pts = 100;
-%     for i=number_of_pts+1:length(FtableCS{kk})
-% 		std_arr(i-number_of_pts) = mean(FtableCS{kk}(i-number_of_pts:i));
-% 	end
+    clear Ftable temp
+    
     %plot calibration sensor data in order to find indices of steps. record
     %these indices in the start_pts and end_pts arrays.
     %Also check one of the higher load force sensor axes.
@@ -81,11 +83,11 @@ for kk=1:12
 %     title('CS1')
 %     
 %     figure
-%     plot(FtableCS{kk}(:,2),'b')
+%     plot(FtableCS{kk}(:,2))
 %     title('CS2')
-%     
-% %     Fx1f=filter1(10,5,1000,Ftablefs{kk}(:,1));
-%     
+    
+%     Fx1f=filter1(10,5,1000,Ftablefs{kk}(:,1));
+    
 %     figure
 %     plot(Ftablefs{kk}(:,7))
 %     hold on
@@ -94,62 +96,61 @@ for kk=1:12
 %     plot(FtableCS{kk}(:,2).*sflc1N)
 %     hold off
 %     title('FS')
-%     plot(idxArray, Ftable.Fz1, 'k', idxArray, Ftable.Fz2, 'r', idxArray, Ftable.Fz3, 'b');
+    
 end
 %%
     %start and end points for all steps that will be averaged
     %First level portion is a zero. Ignore end level portion because force sensors have residual charge. 
     %0, step, step, step
+%first SSC:
+%     kk=single_idx;
+%     start_pts{kk}=[22000,24500,52500,58000];
+%     end_pts{kk}=[23000,25500,53500,59000];   
     kk=1;
-    start_pts{kk}=[39e3,44e3,73e3,78e3,101e3,104.5e3];
-    end_pts{kk}=[40e3,45e3,74e3,79e3,102e3,105.5e3];
+    start_pts{kk}=[39000,44000,73000,78000,101000,105000];
+    end_pts{kk}=[40000,45000,74000,79000,102000,106000];
     kk=2;
-    start_pts{kk}=[31e3,35.5e3,54e3,58e3,76e3,81e3];
-    end_pts{kk}=[32e3,36.5e3,55e3,58e3,77e3,82e3];
+    start_pts{kk}=[31000,35000,53500,58000,76000,81000];
+    end_pts{kk}=[32000,36000,54500,59000,77000,82000];
     kk=3;
-    start_pts{kk}=[16e3,19e3,42.5e3,45.5e3,60e3,62e3];
-    end_pts{kk}=[17e3,20e3,43.5e3,46.5e3,60.9e3,63e3];
+    start_pts{kk}=[16000,20000,43000,46000,60000,62000];
+    end_pts{kk}=[17000,21000,44000,47000,61000,63000];
     kk=4;
-    start_pts{kk}=[17e3,21e3,43.5e3,47e3,55.5e3,58.5e3];
-    end_pts{kk}=[18e3,22e3,44.5e3,48e3,56.5e3,59.3e3];
+    start_pts{kk}=[17500,20500,44000,47000,56000,58300];
+    end_pts{kk}=[18500,21500,45000,48000,57000,59300];
     kk=5;
-    start_pts{kk}=[9e3,11e3,28e3,30e3,41e3,43e3];
-    end_pts{kk}=[10e3,12e3,29e3,31e3,42e3,44e3];
+    start_pts{kk}=[9000,11000,28000,30000,41500,43000];
+    end_pts{kk}=[10000,12000,29000,31000,42500,44000];
     kk=6;
-    start_pts{kk}=[50e3,53e3,71e3,77e3,91e3,95e3];
-    end_pts{kk}=[51e3,54e3,72e3,78e3,92e3,96e3];
+    start_pts{kk}=[50000,53500,71000,76000,91000,95000];
+    end_pts{kk}=[51000,54500,72000,77000,92000,96000];  
     kk=7;
-    start_pts{kk}=[6e3,9e3,24.5e3,27e3];
-    end_pts{kk}=[7e3,10e3,25.5e3,28e3];
+    start_pts{kk}=[6500,9000,24500,26500];
+    end_pts{kk}=[7500,10000,25500,27500];  
     kk=8;
-    start_pts{kk}=[22e3,24e3,53e3,64e3];
-    end_pts{kk}=[23e3,25e3,54e3,65e3];
+    start_pts{kk}=[22000,24500,52500,58000];
+    end_pts{kk}=[23000,25500,53500,59000]; 
     kk=9;
-    start_pts{kk}=[10e3,12e3,45e3,47e3];
-    end_pts{kk}=[11e3,13e3,46e3,48e3];
+    start_pts{kk}=[10000,13000,45000,48000];
+    end_pts{kk}=[11000,14000,46000,49000]; 
     kk=10;
-    start_pts{kk}=[15e3,25e3,50.8e3,58e3];
-    end_pts{kk}=[16e3,26e3,51.8e3,59e3];
+    start_pts{kk}=[14500,22000,50000,57000];
+    end_pts{kk}=[15500,23000,51000,58000];
     kk=11;
-    start_pts{kk}=[12e3,16e3,29e3,36e3];
-    end_pts{kk}=[13e3,17e3,30e3,37e3];
+    start_pts{kk}=[12500,16000,29500,34000];
+    end_pts{kk}=[13500,17000,30500,35000];
     kk=12;
-    start_pts{kk}=[11e3,17e3,46e3,55e3];
-    end_pts{kk}=[12e3,18e3,47e3,56e3];
+    start_pts{kk}=[11000,16000,46000,53000];
+    end_pts{kk}=[12000,17000,47000,54000];
 %% check start and end pts
-negateflag=[1,-1,1,-1,1,-1,1,1,1,1,1,1];
-close all;
+negateflag=[1,1,1,1,1,1,1,1,1,1,1,1];
 %loop over kk
-% for kk=1:12
-kk = 8;
-plotNames = {'Fx1','Fx2','Fx3','Fy1','Fy2','Fy3','Fz1','Fz2','Fz3'};
-calNames = {'Fx+','Fx-','Fy+','Fy-','Fz+','Fz-','Tx+','Tx-','Ty+','Ty-','Tz+','Tz-'};
-% loop over jj for fx1,fx2,fx3,fy1,fy2,fy3,fz1,fz2,fz3
-figure('units','normalized','outerposition',[0 0 1 1]);
-tiledlayout(3,3,"TileSpacing","compact","Padding","compact");
+for kk=1:12
+% kk=single_idx;
+% loop over jj
     for jj=1:9
 % jj=8;
-		nexttile;
+        figure
         temp=Ftablefs{kk}(:,jj);
         plot(temp)
         yhigh1=max(temp);
@@ -184,40 +185,48 @@ tiledlayout(3,3,"TileSpacing","compact","Padding","compact");
            plot(ones(1,2)*end_pts{kk}(mm),[ylow,yhigh],'k')
         end
         hold off
-        legend('Kistler Sensor',strcat('S-Sensor:'," ",calNames{kk}), 'Interpreter', 'none')
-        title(plotNames{jj});
-		axis padded;
+        legend('FS','Cal')
+        title([num2str(kk),' ',num2str(jj)])
     end
-% end
+end
 
 %% Create diagram
-kk = single_idx;
+kk=single_idx;
 %This plots a top down view with force vectors for the highest load test
 %point. It also estimates the net forces and torques. However, the net
 %forces and torques are raw and not calibrated. The rule of thumb is that
 %the off-axis forces and torques (the ones not being forced) should be low,
+%
 %ideally < 1% (and definitely <5%) of the max applied load in the forced axis.
 %You have to be careful though, sometimes a off-axis force or torque is
-%expected. For example, +Fy should cause a net +Tz due to where the center of
+%expected. For example, +Fy should cause a net +Tz due to where the center
+%of9209hg
 %the force sensors are vs. center of the tank.
+
 diagramcreate(Ftablefs{kk},FtableCS{kk},start_pts{kk},end_pts{kk})
+
+
 %% K matrix creation section
+
+
 %K matrix columns:
 %[Kx1Fx;Kx2Fx;Kx3Fx;Ky1Fx;Ky2Fx;Ky3Fx;Kz1Fx;Kz2Fx;Kz3Fx]
 K96=zeros(9,6);
+
 %loop to create K matrix:
-for kk = 1:12
+for kk=1:12
  %make time array:
 %     dt=0.001; %time step [s]
 %     tvec=0:dt:dt*(length(FtableCS{kk}(:,1))-1);
 %     tvec=tvec';
-	nsteps = length(end_pts{kk});
-	npoints = nsteps/2;
-% 	if nsteps==6
-% 		npoints=3; %number of low-high or high-low steps
-% 	elseif nsteps==4
-% 		npoints=2;
-%     end
+    
+    nsteps=length(end_pts{kk});
+    if nsteps==6
+        npoints=3; %number of low-high or high-low steps
+    elseif nsteps==4
+        npoints=2;
+    end
+
     %Vs=[Vx1,Vx2,Vx3,Vy1,Vy2,Vy3,Vz1,Vz2,Vz3]. Each column is a different V, rows are different steps
     %Want both + and - steps in Vs. 
     Vs=zeros(nsteps*2,9);
@@ -227,7 +236,7 @@ for kk = 1:12
 %                 Vs(ii,jj)=mean(Ftablefs{kk}((start_pts{kk}(ii)):(end_pts{kk}(ii)-phaseshift),jj))*sf(jj,kk);
 %                 Vs(ii+nsteps,jj)=mean(Ftablefs{kk+1}((start_pts{kk+1}(ii)):(end_pts{kk+1}(ii)-phaseshift),jj))*sf(jj,kk+1); %negative axis 
 %             else
-                Vs(ii,jj)=mean(Ftablefs{kk}(start_pts{kk}(ii):end_pts{kk}(ii),jj))*sf(jj,kk);
+                Vs(ii,jj)=mean(Ftablefs{kk}((start_pts{kk}(ii)-phaseshift):(end_pts{kk}(ii)-phaseshift),jj))*sf(jj,kk);
                 Vs(ii+nsteps,jj)=mean(Ftablefs{kk+1}((start_pts{kk+1}(ii)-phaseshift):(end_pts{kk+1}(ii)-phaseshift),jj))*sf(jj,kk+1); %negative axis
 %             end
         end
@@ -238,7 +247,7 @@ for kk = 1:12
 %     Vs(nsteps+1,:)=[];
 %     Vs=[temp;Vs];
 %     clear temp
-  
+
     % CSs=[CS1,CS2]. Each column is a different calibration force, rows are different steps
     %calibration load cell forces in N 
     CSs=zeros(nsteps*2,2);
@@ -258,8 +267,8 @@ for kk = 1:12
 %     clear temp
 
     %step differences = points for fit. Each column is different V, rows are different points.
-    Vss=zeros(nsteps,9);
-    for ii=1:nsteps
+    Vss=zeros(npoints*2,9);
+    for ii=1:npoints*2
         if caseflag(kk)==0 %weights, low-high steps
             for jj=1:9
                 Vss(ii,jj)=Vs(2*ii,jj)-Vs(2*ii-1,jj);
@@ -293,6 +302,7 @@ for kk = 1:12
 %     CSss=[CSs(1,:);CSss];  %add zero point
     CSss=[zeros(1,2);CSss]; %add true zero point
  
+
     %includes logic to account for if a + axis used Cal1 and - axis used Cal2
     ApLoad=zeros((2*npoints+1),1); 
     if calsensorflag(kk)==1 && calsensorflag(kk+1)==1
