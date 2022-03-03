@@ -16,7 +16,7 @@ clc
 
 single_idx = 12;
 
-prefixfilename='C:\Users\Lab 116\Desktop\PACE Calibration\CSVs\';
+prefixfilename='./FinalData/';
 csvarray={'Fx_pos_1.csv','Fx_neg_1.csv','Fy_pos_1.csv','Fy_neg_1.csv',...
     'Fz_pos_1.csv','Fz_neg_1.csv','Tx_pos_1.csv','Tx_neg_1.csv',...
     'Ty_pos_1.csv','Ty_neg_1.csv','Tz_pos_1.csv','Tz_neg_1.csv'};
@@ -214,7 +214,7 @@ diagramcreate(Ftablefs{kk},FtableCS{kk},start_pts{kk},end_pts{kk})
 K96=zeros(9,6);
 
 %loop to create K matrix:
-for kk=1:12
+for kk=1:2:12
  %make time array:
 %     dt=0.001; %time step [s]
 %     tvec=0:dt:dt*(length(FtableCS{kk}(:,1))-1);

@@ -207,7 +207,7 @@ diagramcreate(Ftablefs{kk},FtableCS{kk},start_pts{kk},end_pts{kk})
 %[Kx1Fx;Kx2Fx;Kx3Fx;Ky1Fx;Ky2Fx;Ky3Fx;Kz1Fx;Kz2Fx;Kz3Fx]
 K96=zeros(9,6);
 %loop to create K matrix:
-for kk = 1:12
+for kk = 1:2:12
  %make time array:
 %     dt=0.001; %time step [s]
 %     tvec=0:dt:dt*(length(FtableCS{kk}(:,1))-1);
