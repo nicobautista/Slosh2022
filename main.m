@@ -12,10 +12,10 @@
 %run this section once at beginning
 close all;clear;clc;
 single_idx = 12;
-prefixfilename='C:\Users\nicob\Downloads\Tank\2022\FinalData\';
-csvarray={	'Fx_pos_1.csv','Fx_neg_1.csv','Fy_pos_1.csv','Fy_neg_1.csv',...
-			'Fz_pos_1.csv','Fz_neg_1.csv','Tx_pos_1.csv','Tx_neg_1.csv',...
-			'Ty_pos_1.csv','Ty_neg_1.csv','Tz_pos_1.csv','Tz_neg_1.csv'};
+prefixfilename='./FinalData/';
+csvarray={'Fx_pos_1.csv','Fx_neg_1.csv','Fy_pos_1.csv','Fy_neg_1.csv',...
+    'Fz_pos_1.csv','Fz_neg_1.csv','Tx_pos_1.csv','Tx_neg_1.csv',...
+    'Ty_pos_1.csv','Ty_neg_1.csv','Tz_pos_1.csv','Tz_neg_1.csv'};
 
 %scale factor corrections for each file. Only necessary if mess up the
 %scale factor entry in the Labview (which multiplies by the
@@ -141,11 +141,12 @@ negateflag=[1,-1,1,-1,1,-1,1,1,1,1,1,1];
 close all;
 %loop over kk
 % for kk=1:12
-kk = 8;
+kk = 6;
 plotNames = {'Fx1','Fx2','Fx3','Fy1','Fy2','Fy3','Fz1','Fz2','Fz3'};
 calNames = {'Fx+','Fx-','Fy+','Fy-','Fz+','Fz-','Tx+','Tx-','Ty+','Ty-','Tz+','Tz-'};
 % loop over jj for fx1,fx2,fx3,fy1,fy2,fy3,fz1,fz2,fz3
-figure('units','normalized','outerposition',[0 0 1 1]);
+fh = figure;
+fh.WindowState = 'maximized';
 tiledlayout(3,3,"TileSpacing","compact","Padding","compact");
     for jj=1:9
 % jj=8;
@@ -329,7 +330,7 @@ for kk = 1:12
     weights=ones((2*npoints+1),1);
     weights(1)=50;
     for jj=1:9
-        K96(jj,(kk+1)/2)=fitline(ApLoad,Vss(:,jj),weights);
+        K96(jj,(kk+1)/2)=fitline(ApLoad,Vss(:,jj),weights,0);
 %         jj
 %         (kk+1)/2
     end

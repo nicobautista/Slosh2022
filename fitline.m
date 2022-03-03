@@ -1,4 +1,4 @@
-function [K] = fitline(x,y,weights)
+function [K] = fitline(x,y,weights,plotBool)
 % This function takes a X column vector and Y column vector and creates a
 % linear fit. It then returns the slope of that line, which is the K [V/N]
 % coefficient. 
@@ -12,14 +12,15 @@ xlimhigh=max(x);
 xvec=linspace(xlimlow,xlimhigh);
 cfs=coeffvalues(fitFV);
 fitFVvec=feval(fitFV,xvec);
-figure
-hold on
-scatter(x,y)
-plot(xvec,fitFVvec)
-title('V vs. F')
-legend('data points','fit')
-hold off
-
+if plotBool
+	figure
+	hold on
+	scatter(x,y)
+	plot(xvec,fitFVvec)
+	title('V vs. F')
+	legend('data points','fit')
+	hold off
+end
 K=cfs(1); %V/N
 
 if gof.rsquare < 0.9
