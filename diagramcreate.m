@@ -12,7 +12,7 @@ fs3=[-0.635,0.7112,0];
 r=0.3937; %m moment arm for torque, bolt hole pattern radius (15.5 in)
 
 %generate squares: force sensor plates
-figure
+% figure
 
 w=1*0.2; %m
 x1=-w/2+fs1(1);

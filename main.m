@@ -183,7 +183,13 @@ tiledlayout(3,3,"TileSpacing","compact","Padding","compact");
 % end
 
 %% Create diagram
-kk = single_idx;
+close all;
+calNames = {'Fx+','Fx-','Fy+','Fy-','Fz+','Fz-','Tx+','Tx-','Ty+','Ty-','Tz+','Tz-'};
+fd = figure;
+fdtl = tiledlayout(3,4);
+fd.WindowState = 'maximized';
+% kk = single_idx;
+for kk=1:12
 %This plots a top down view with force vectors for the highest load test
 %point. It also estimates the net forces and torques. However, the net
 %forces and torques are raw and not calibrated. The rule of thumb is that
@@ -192,7 +198,12 @@ kk = single_idx;
 %You have to be careful though, sometimes a off-axis force or torque is
 %expected. For example, +Fy should cause a net +Tz due to where the center of
 %the force sensors are vs. center of the tank.
-diagramcreate(Ftablefs{kk},FtableCS{kk},start_pts{kk},end_pts{kk})
+	nexttile;
+	diagramcreate(Ftablefs{kk},FtableCS{kk},start_pts{kk},end_pts{kk});
+	title(calNames{kk});
+	fdtl.TileSpacing = 'compact';
+	fdtl.Padding = 'compact';
+end
 %% K matrix creation section
 %K matrix columns:
 %[Kx1Fx;Kx2Fx;Kx3Fx;Ky1Fx;Ky2Fx;Ky3Fx;Kz1Fx;Kz2Fx;Kz3Fx]
