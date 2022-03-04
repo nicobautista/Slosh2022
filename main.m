@@ -1,21 +1,22 @@
 %This script filters and chops up the static system calibration data,
 %then uses it to calculate the K matrix. 
 
-%Instructions: run section 1 once. Run section 2, record step start and end
+%Instructions: 
+%	Type the name of the path where the CSV files are located
+%		The default value assumes that there is a subdirectory called 'FinalData' containing the 12 CSV files 
+%		inside the same directory as this script. If this is not the case, change the 'prefixfilename' variable
+%	Type names of CSV files in the 'csvarray' variable
+%	If only running the script for a single CSV, set 'single_idx' to the desired value (corresponding to 'csvarray')
+%	Run section 1 once. Run section 2, record step start and end
 %points in section 3, run section 3, go back to section 2 and change k,
 %repeat these steps for k=1:12. 
 %Change r and fs's
-
-%v3: adds a true zero point and enforces it using linear fit weights. Did
-%not have much of an effect. 
-
-%run this section once at beginning
+%% Section 1: Set path and names variables for CSV files
 close all;clear;clc;
 single_idx = 12;
 prefixfilename='./FinalData/';
-csvarray={	'Fx_pos_1.csv','Fx_neg_1.csv','Fy_pos_1.csv','Fy_neg_1.csv',...
-			'Fz_pos_1.csv','Fz_neg_1.csv','Tx_pos_1.csv','Tx_neg_1.csv',...
-			'Ty_pos_1.csv','Ty_neg_1.csv','Tz_pos_1.csv','Tz_neg_1.csv'};
+csvarray = {'Fx_pos_1.csv','Fx_neg_1.csv','Fy_pos_1.csv','Fy_neg_1.csv','Fz_pos_1.csv','Fz_neg_1.csv',...
+			'Tx_pos_1.csv','Tx_neg_1.csv','Ty_pos_1.csv','Ty_neg_1.csv','Tz_pos_1.csv','Tz_neg_1.csv'};
 
 %scale factor corrections for each file. Only necessary if mess up the
 %scale factor entry in the Labview (which multiplies by the
@@ -23,16 +24,6 @@ csvarray={	'Fx_pos_1.csv','Fx_neg_1.csv','Fy_pos_1.csv','Fy_neg_1.csv',...
 %charge amplifiers, which divide by SF before transmitting the voltage,
 %thus requiring labview to multiply by SF. 
 sf=ones(9,12); %N/V scale factors. each column: [x1;x2;x3;y1;y2;y3;z1;z2;z3]
-% sf(:,1)=[100/30;100/30;100/30;5/10;5/10;5/10;5/10;5/10;5/10]; %Fx_pos_1.csv
-% sf(:,7)=[1;1;1;1;1;0.1;1;1;1]; %Tx_pos_1.csv
-% sf(:,8)=[1;1;1;1;1;0.1;1;1;1]; %Tx_neg_1.csv
-%correct orientation to frame axes:
-% sf(1,:)=sf(1,:)*-1;
-% sf(2,:)=sf(2,:)*-1;
-% sf(4,:)=sf(4,:)*-1;
-% sf(7,:)=sf(7,:)*-1;
-% sf(8,:)=sf(8,:)*-1;
-% sf(9,:)=sf(9,:)*-1;
 %calibration load cell scale factors (constant)
 sflc1=100; %lbf/V
 sflc2=100; %lbf/V
