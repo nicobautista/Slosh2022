@@ -16,7 +16,7 @@ close all;clear;clc;
 single_idx = 12;
 prefixfilename='./FinalData/';
 csvarray = {'Fx_pos_1.csv','Fx_neg_1.csv','Fy_pos_1.csv','Fy_neg_1.csv','Fz_pos_1.csv','Fz_neg_1.csv',...
-			'Tx_pos_2.csv','Tx_neg_1.csv','Ty_pos_1.csv','Ty_neg_1.csv','Tz_pos_1.csv','Tz_neg_1.csv'};
+			'Tx_pos_3.csv','Tx_neg_1.csv','Ty_pos_1.csv','Ty_neg_1.csv','Tz_pos_1.csv','Tz_neg_1.csv'};
 
 %scale factor corrections for each file. Only necessary if mess up the
 %scale factor entry in the Labview (which multiplies by the
@@ -137,7 +137,7 @@ negateflag=[1,-1,1,-1,1,-1,1,1,1,1,1,1];
 close all;
 %loop over kk
 % for kk=1:12
-kk = 12;
+kk = 7;
 plotNames = {'Fx1','Fx2','Fx3','Fy1','Fy2','Fy3','Fz1','Fz2','Fz3'};
 calNames = {'Fx+','Fx-','Fy+','Fy-','Fz+','Fz-','Tx+','Tx-','Ty+','Ty-','Tz+','Tz-'};
 % loop over jj for fx1,fx2,fx3,fy1,fy2,fy3,fz1,fz2,fz3

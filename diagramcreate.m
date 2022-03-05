@@ -39,14 +39,14 @@ y = [y5, y5, y6, y6, y5];
 plot(x, y, 'k-', 'LineWidth', 2);
 
 %X,Y,Z forces
-avgs_1=mean(fdata(startpts(3):endpts(3),:));
-avgs_2=mean(fdata(startpts(4):endpts(4),:));
+avgs_1=mean(fdata(startpts(1):endpts(1),:));
+avgs_2=mean(fdata(startpts(2):endpts(2),:));
 deltas=avgs_1-avgs_2;
 % XY Arrow Drawing:
 arrow_size = 0.25;
-arrow_thickness = 3.5;
+arrow_thickness = 3;
 arrow_dims = [0,arrow_size];
-txt_padding = [0.8*arrow_dims(2),-0.05;-0.05,1.15*arrow_dims(2)];
+txt_padding = [0.5*arrow_dims(2),-0.05;-0.05,1.15*arrow_dims(2)];
 arrows_X = [fs1(1),fs2(1),fs3(1)];
 arrows_Y = [fs1(2),fs2(2),fs3(2)];
 colors = ['b','r','g'];
@@ -54,46 +54,37 @@ count = 1;
 for xy_idx = 1:2
 	for sensors_idx = 1:3
 		quiver(arrows_X(sensors_idx),arrows_Y(sensors_idx),arrow_dims(3-xy_idx),arrow_dims(xy_idx),colors(sensors_idx),'LineWidth',arrow_thickness);
-		text(arrows_X(sensors_idx)+txt_padding(xy_idx,1),arrows_Y(sensors_idx)+txt_padding(xy_idx,2),sprintf('%.1f',deltas(count)));
+		text(arrows_X(sensors_idx)+txt_padding(xy_idx,1),arrows_Y(sensors_idx)+txt_padding(xy_idx,2),sprintf('%.1f N',deltas(count)));
 		count = count + 1;
 	end
 end
-%draw Fz arrows:
-th = 0:pi/50:2*pi;
-xcir1 = 0.04 * cos(th);
-ycir1 = 0.04 * sin(th);
-plot(xcir1+fs1(1), ycir1+fs1(2),'b');
-plot(xcir1+fs2(1), ycir1+fs2(2),'r');
-plot(xcir1+fs3(1), ycir1+fs3(2),'g');
-if deltas(7)>0
-    plot(fs1(1),fs1(2),'bo','MarkerFaceColor','b')
+line_th = 2;
+plot(fs1(1),fs1(2),'o','Color',[0,0,0.45],'MarkerSize',17,'LineWidth',line_th);
+plot(fs2(1),fs2(2),'o','Color',[0.45,0,0],'MarkerSize',17,'LineWidth',line_th);
+plot(fs3(1),fs3(2),'o','Color',[0,0.45,0],'MarkerSize',17,'LineWidth',line_th);
+if deltas(7) > 0
+    plot(fs1(1),fs1(2),'o','Color',[0,0,0.45],'MarkerFaceColor',[0,0,0.45],'MarkerSize',10);
 else
-    plot(fs1(1),fs1(2),'bx','MarkerSize',10)  
+    plot(fs1(1),fs1(2),'x','Color',[0,0,0.45],'MarkerSize',17,'LineWidth',line_th*1.75);
 end
-if deltas(8)>0
-    plot(fs2(1),fs2(2),'ro','MarkerFaceColor','r')
+if deltas(8) > 0
+    plot(fs2(1),fs2(2),'o','Color',[0.45,0,0],'MarkerFaceColor',[0.45,0,0],'MarkerSize',10);
 else
-    plot(fs2(1),fs2(2),'rx','MarkerSize',10)  
+    plot(fs2(1),fs2(2),'x','Color',[0.45,0,0],'MarkerSize',17,'LineWidth',line_th*1.75);
 end
-if deltas(9)>0
-    plot(fs3(1),fs3(2),'go','MarkerFaceColor','g')
+if deltas(9) > 0
+    plot(fs3(1),fs3(2),'o','Color',[0,0.45,0],'MarkerFaceColor',[0,0.45,0],'MarkerSize',10);
 else
-    plot(fs3(1),fs3(2),'gx','MarkerSize',10)  
+    plot(fs3(1),fs3(2),'x','Color',[0,0.45,0],'MarkerSize',17,'LineWidth',line_th*1.75);
 end
-text(fs1(1)-0.05,fs1(2)-0.05,num2str(round(deltas(7)),'%i'))
-text(fs2(1)-0.1,fs2(2)-0.05,num2str(round(deltas(8)),'%i'))
-text(fs3(1)-0.1,fs3(2)+0.05,num2str(round(deltas(9)),'%i'))
-
+text(x1,y1-0.05,sprintf("%.1f N",deltas(7)));
+text(x3,y3-0.05,sprintf("%.1f N",deltas(8)));
+text(x5,y5-0.05,sprintf("%.1f N",deltas(9)));
 
 %total F's and T's
-netFx=round(sum(deltas(1:3)));
-netFy=round(sum(deltas(4:6)));
-netFz=round(sum(deltas(7:9)));
-
-
-% netTx=round((deltas(8)-deltas(9))*fs2(2));
-% netTy=round((deltas(7)-(deltas(8)+deltas(9))*abs(fs3(1)/fs1(1)))*fs1(1));
-% netTz=round(((deltas(3)-deltas(2))*abs(fs3(2)/fs1(1))-deltas(4)+(deltas(5)+deltas(6))*abs(fs3(1)/fs1(1)))*fs1(1));
+netFx=sum(deltas(1:3));
+netFy=sum(deltas(4:6));
+netFz=sum(deltas(7:9));
 
 netTx=(deltas(9)-1*deltas(8))*abs(fs2(2));
 netTy=-1*deltas(7)*abs(fs1(1))+(deltas(8)+deltas(9))*abs(fs2(2));
