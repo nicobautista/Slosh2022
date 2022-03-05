@@ -16,7 +16,7 @@ close all;clear;clc;
 single_idx = 12;
 prefixfilename='./FinalData/';
 csvarray = {'Fx_pos_1.csv','Fx_neg_1.csv','Fy_pos_1.csv','Fy_neg_1.csv','Fz_pos_1.csv','Fz_neg_1.csv',...
-			'Tx_pos_3.csv','Tx_neg_1.csv','Ty_pos_1.csv','Ty_neg_1.csv','Tz_pos_1.csv','Tz_neg_1.csv'};
+			'Tx_pos_2.csv','Tx_neg_1.csv','Ty_pos_1.csv','Ty_neg_1.csv','Tz_pos_1.csv','Tz_neg_1.csv'};
 
 %scale factor corrections for each file. Only necessary if mess up the
 %scale factor entry in the Labview (which multiplies by the
@@ -80,14 +80,14 @@ for kk=1:12
 %     
 % %     Fx1f=filter1(10,5,1000,Ftablefs{kk}(:,1));
 %     
-    figure
-    plot(Ftablefs{kk}(:,7))
-    hold on
-%     plot(filter1(10,5,1000,-Ftablefs{kk}(:,9)))
-    plot(FtableCS{kk}(:,1).*sflc1N)
-    plot(FtableCS{kk}(:,2).*sflc1N)
-    hold off
-    title('FS')
+%     figure
+%     plot(Ftablefs{kk}(:,7))
+%     hold on
+% %     plot(filter1(10,5,1000,-Ftablefs{kk}(:,9)))
+%     plot(FtableCS{kk}(:,1).*sflc1N)
+%     plot(FtableCS{kk}(:,2).*sflc1N)
+%     hold off
+%     title('FS')
 % % %     plot(idxArray, Ftable.Fz1, 'k', idxArray, Ftable.Fz2, 'r', idxArray, Ftable.Fz3, 'b');
 end
 %%
@@ -206,8 +206,8 @@ for kk=1:12
 	nexttile;
 	diagramcreate(Ftablefs{kk},FtableCS{kk},start_pts{kk},end_pts{kk});
 	title(calNames{kk});
-	fdtl.TileSpacing = 'compact';
-	fdtl.Padding = 'compact';
+	fdtl.TileSpacing = 'tight';
+	fdtl.Padding = 'tight';
 end
 %% K matrix creation section
 %K matrix columns:

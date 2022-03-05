@@ -42,38 +42,22 @@ plot(x, y, 'k-', 'LineWidth', 2);
 avgs_1=mean(fdata(startpts(3):endpts(3),:));
 avgs_2=mean(fdata(startpts(4):endpts(4),:));
 deltas=avgs_1-avgs_2;
-fxarrowmax=max(abs(deltas(1:3)))*2;
-fyarrowmax=max(abs(deltas(4:6)))*2;
-
-%draw Fx arrows:
-if abs(deltas(1))>=1
-    quiver( fs1(1),fs1(2),deltas(1)/fxarrowmax,0,0 ,'b')
-    text(fs1(1)+deltas(1)/fxarrowmax/2,fs1(2)+0.03,num2str(round(deltas(1)),'%i'))
+% XY Arrow Drawing:
+arrow_size = 0.25;
+arrow_thickness = 3.5;
+arrow_dims = [0,arrow_size];
+txt_padding = [0.8*arrow_dims(2),-0.05;-0.05,1.15*arrow_dims(2)];
+arrows_X = [fs1(1),fs2(1),fs3(1)];
+arrows_Y = [fs1(2),fs2(2),fs3(2)];
+colors = ['b','r','g'];
+count = 1;
+for xy_idx = 1:2
+	for sensors_idx = 1:3
+		quiver(arrows_X(sensors_idx),arrows_Y(sensors_idx),arrow_dims(3-xy_idx),arrow_dims(xy_idx),colors(sensors_idx),'LineWidth',arrow_thickness);
+		text(arrows_X(sensors_idx)+txt_padding(xy_idx,1),arrows_Y(sensors_idx)+txt_padding(xy_idx,2),sprintf('%.1f',deltas(count)));
+		count = count + 1;
+	end
 end
-if abs(deltas(2))>=1
-quiver( fs2(1),fs2(2),deltas(2)/fxarrowmax,0,0 ,'r')
-text(fs2(1)+deltas(2)/fxarrowmax/2,fs2(2)+0.03,num2str(round(deltas(2)),'%i'))
-end
-if abs(deltas(3))>=1
-quiver( fs3(1),fs3(2),deltas(3)/fxarrowmax,0,0 ,'g')
-text(fs3(1)+deltas(3)/fxarrowmax/2,fs3(2)+0.03,num2str(round(deltas(3)),'%i'))
-end
-
-%draw Fy arrows: 
-if abs(deltas(4))>=1
-quiver( fs1(1),fs1(2),0,deltas(4)/fyarrowmax,0 ,'b')
-text(fs1(1)+0.03,fs1(2)+deltas(4)/fyarrowmax/2,num2str(round(deltas(4)),'%i'))
-end
-if abs(deltas(5))>=1
-quiver( fs2(1),fs2(2),0,deltas(5)/fyarrowmax,0 ,'r')
-text(fs2(1)+0.03,fs2(2)+deltas(5)/fyarrowmax/2,num2str(round(deltas(5)),'%i'))
-end
-if abs(deltas(6))>=1
-quiver( fs3(1),fs3(2),0,deltas(6)/fyarrowmax,0 ,'g')
-text(fs3(1)+0.03,fs3(2)+deltas(6)/fyarrowmax/2,num2str(round(deltas(6)),'%i'))
-end
-
-
 %draw Fz arrows:
 th = 0:pi/50:2*pi;
 xcir1 = 0.04 * cos(th);
@@ -105,23 +89,27 @@ text(fs3(1)-0.1,fs3(2)+0.05,num2str(round(deltas(9)),'%i'))
 netFx=round(sum(deltas(1:3)));
 netFy=round(sum(deltas(4:6)));
 netFz=round(sum(deltas(7:9)));
-netTx=round((deltas(8)-deltas(9))*fs2(2)); 
-netTy=round((deltas(7)-(deltas(8)+deltas(9))*abs(fs3(1)/fs1(1)))*fs1(1)); 
-% netTy=round(deltas(7)*fs1(1)+(deltas(8)+deltas(9))*fs2(2));
-netTz=round(((deltas(3)-deltas(2))*abs(fs3(2)/fs1(1))-deltas(4)+(deltas(5)+deltas(6))*abs(fs3(1)/fs1(1)))*fs1(1)); 
-txt = {['Net Fx: ',num2str(netFx),'N'],...
-    ['Net Fy: ',num2str(netFy),'N'],...
-    ['Net Fz: ',num2str(netFz),'N'],...
-    ['Net Tx: ',num2str(netTx),'Nm'],...
-    ['Net Ty: ',num2str(netTy),'Nm'],...
-    ['Net Tz: ',num2str(netTz),'Nm']};
-text(0,0,txt,'%i')
 
 
-% axis equal
-axis tight
+% netTx=round((deltas(8)-deltas(9))*fs2(2));
+% netTy=round((deltas(7)-(deltas(8)+deltas(9))*abs(fs3(1)/fs1(1)))*fs1(1));
+% netTz=round(((deltas(3)-deltas(2))*abs(fs3(2)/fs1(1))-deltas(4)+(deltas(5)+deltas(6))*abs(fs3(1)/fs1(1)))*fs1(1));
+
+netTx=(deltas(9)-1*deltas(8))*abs(fs2(2));
+netTy=-1*deltas(7)*abs(fs1(1))+(deltas(8)+deltas(9))*abs(fs2(2));
+netTz=deltas(2)*abs(fs2(2))-1*deltas(3)*abs(fs3(2))+deltas(4)*abs(fs1(1))-1*(deltas(5)+deltas(6))*abs(fs2(1));
+
+txt = {[sprintf('Net Fx: %10.1f N',netFx)],...
+    [sprintf('Net Fy: %10.1f N',netFy)],...
+    [sprintf('Net Fz: %10.1f N',netFz)],...
+    [sprintf('Net Tx: %10.1f Nm',netTx)],...
+    [sprintf('Net Ty: %10.1f Nm',netTy)],...
+    [sprintf('Net Tz: %10.1f Nm',netTz)]};
+text(0,0,txt)
+axis padded
 hold off
-title('Top-down view')
+xticklabels([]);
+yticklabels([]);
 
 
 %plot squares at each force sensor center, add number
