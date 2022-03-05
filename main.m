@@ -16,14 +16,17 @@ close all;clear;clc;
 single_idx = 12;
 prefixfilename='./FinalData/';
 csvarray = {'Fx_pos_1.csv','Fx_neg_1.csv','Fy_pos_1.csv','Fy_neg_1.csv','Fz_pos_1.csv','Fz_neg_1.csv',...
-			'Tx_pos_1.csv','Tx_neg_1.csv','Ty_pos_1.csv','Ty_neg_1.csv','Tz_pos_1.csv','Tz_neg_1.csv'};
+			'Tx_pos_3.csv','Tx_neg_1.csv','Ty_pos_1.csv','Ty_neg_1.csv','Tz_pos_1.csv','Tz_neg_1.csv'};
 
 %scale factor corrections for each file. Only necessary if mess up the
 %scale factor entry in the Labview (which multiplies by the
 %scale factor). Scale factors in labview should be the same as those on the
 %charge amplifiers, which divide by SF before transmitting the voltage,
 %thus requiring labview to multiply by SF. 
-sf=ones(9,12); %N/V scale factors. each column: [x1;x2;x3;y1;y2;y3;z1;z2;z3]
+sf=10*ones(9,12); %N/V scale factors. each column: [x1;x2;x3;y1;y2;y3;z1;z2;z3]
+% sf(7,7)=30;
+% sf(8,7)=30;
+% sf(9,7)=30;
 %calibration load cell scale factors (constant)
 sflc1=100; %lbf/V
 sflc2=100; %lbf/V
@@ -77,15 +80,15 @@ for kk=1:12
 %     
 % %     Fx1f=filter1(10,5,1000,Ftablefs{kk}(:,1));
 %     
-%     figure
-%     plot(Ftablefs{kk}(:,7))
-%     hold on
-% %     plot(filter1(10,5,1000,-Ftablefs{kk}(:,9)))
-%     plot(FtableCS{kk}(:,1).*sflc1N)
-%     plot(FtableCS{kk}(:,2).*sflc1N)
-%     hold off
-%     title('FS')
-%     plot(idxArray, Ftable.Fz1, 'k', idxArray, Ftable.Fz2, 'r', idxArray, Ftable.Fz3, 'b');
+    figure
+    plot(Ftablefs{kk}(:,7))
+    hold on
+%     plot(filter1(10,5,1000,-Ftablefs{kk}(:,9)))
+    plot(FtableCS{kk}(:,1).*sflc1N)
+    plot(FtableCS{kk}(:,2).*sflc1N)
+    hold off
+    title('FS')
+% % %     plot(idxArray, Ftable.Fz1, 'k', idxArray, Ftable.Fz2, 'r', idxArray, Ftable.Fz3, 'b');
 end
 %%
     %start and end points for all steps that will be averaged
@@ -110,8 +113,10 @@ end
     start_pts{kk}=[50e3,53e3,71e3,77e3,91e3,95e3];
     end_pts{kk}=[51e3,54e3,72e3,78e3,92e3,96e3];
     kk=7;
-    start_pts{kk}=[6e3,9e3,24.5e3,27e3];
-    end_pts{kk}=[7e3,10e3,25.5e3,28e3];
+%     start_pts{kk}=[6e3,9e3,24.5e3,27e3];
+%     end_pts{kk}=[7e3,10e3,25.5e3,28e3];
+    start_pts{kk}=[33.5e3,37e3,63e3,67e3];
+    end_pts{kk}=[34.e3,38e3,64e3,68e3];
     kk=8;
     start_pts{kk}=[22e3,24e3,53e3,64e3];
     end_pts{kk}=[23e3,25e3,54e3,65e3];
@@ -132,7 +137,7 @@ negateflag=[1,-1,1,-1,1,-1,1,1,1,1,1,1];
 close all;
 %loop over kk
 % for kk=1:12
-kk = 6;
+kk = 12;
 plotNames = {'Fx1','Fx2','Fx3','Fy1','Fy2','Fy3','Fz1','Fz2','Fz3'};
 calNames = {'Fx+','Fx-','Fy+','Fy-','Fz+','Fz-','Tx+','Tx-','Ty+','Ty-','Tz+','Tz-'};
 % loop over jj for fx1,fx2,fx3,fy1,fy2,fy3,fz1,fz2,fz3

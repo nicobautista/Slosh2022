@@ -39,8 +39,8 @@ y = [y5, y5, y6, y6, y5];
 plot(x, y, 'k-', 'LineWidth', 2);
 
 %X,Y,Z forces
-avgs_1=mean(fdata(startpts(1):endpts(1),:));
-avgs_2=mean(fdata(startpts(2):endpts(2),:));
+avgs_1=mean(fdata(startpts(3):endpts(3),:));
+avgs_2=mean(fdata(startpts(4):endpts(4),:));
 deltas=avgs_1-avgs_2;
 fxarrowmax=max(abs(deltas(1:3)))*2;
 fyarrowmax=max(abs(deltas(4:6)))*2;
@@ -107,6 +107,7 @@ netFy=round(sum(deltas(4:6)));
 netFz=round(sum(deltas(7:9)));
 netTx=round((deltas(8)-deltas(9))*fs2(2)); 
 netTy=round((deltas(7)-(deltas(8)+deltas(9))*abs(fs3(1)/fs1(1)))*fs1(1)); 
+% netTy=round(deltas(7)*fs1(1)+(deltas(8)+deltas(9))*fs2(2));
 netTz=round(((deltas(3)-deltas(2))*abs(fs3(2)/fs1(1))-deltas(4)+(deltas(5)+deltas(6))*abs(fs3(1)/fs1(1)))*fs1(1)); 
 txt = {['Net Fx: ',num2str(netFx),'N'],...
     ['Net Fy: ',num2str(netFy),'N'],...
@@ -117,7 +118,8 @@ txt = {['Net Fx: ',num2str(netFx),'N'],...
 text(0,0,txt,'%i')
 
 
-axis equal
+% axis equal
+axis tight
 hold off
 title('Top-down view')
 
