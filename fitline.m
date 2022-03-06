@@ -4,27 +4,23 @@ function [K] = fitline(x,y,weights,plotBool)
 % coefficient. 
 % X should be the calibration load cell data points
 % Y should be the force sensor voltage axis data points
-% tvec is a time vector for plotting
 
 [fitFV,gof] = fit(x,y,'poly1','Weights',weights);
-xlimlow=min(x);
-xlimhigh=max(x);
-xvec=linspace(xlimlow,xlimhigh);
+xvec=linspace(min(x),max(x));
 cfs=coeffvalues(fitFV);
 fitFVvec=feval(fitFV,xvec);
-if plotBool
-	figure
-	hold on
-	scatter(x,y)
-	plot(xvec,fitFVvec)
-	title('V vs. F')
-	legend('data points','fit')
-	hold off
-end
 K=cfs(1); %V/N
-
 if gof.rsquare < 0.9
-    warning('Linear fit R^2 < 0.9')
+    warning('Linear fit R^2: %.2f < 0.9',gof.rsquare)
+end
+if plotBool
+	figure;
+	scatter(x,y);
+	hold on;
+	plot(xvec,fitFVvec);
+	title('V vs. F');
+	legend('Data points','Fit');
+	hold off;
 end
 end
 
