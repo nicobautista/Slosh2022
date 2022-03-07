@@ -3,28 +3,41 @@ close all;clear;clc;
 sr=1000; %sample rate Hz
 cutoff_f = 15;
 filt_order = 5;
+% csv_file_name = "./Sample_Slosh_Data/test248.csv";
+csv_file_name = "./FinalData/Fx_neg_1.csv";
+titles = ["Fx","Fy","Fz","Tx","Ty","Tz"];
+data = readtable(csv_file_name,"VariableNamingRule","preserve");
+forces9 = [data.Fx1,data.Fx2,data.Fx3,data.Fy1,data.Fy2,data.Fy3,data.Fz1,data.Fz2,data.Fz3];
+fl = filter1(cutoff_f,filt_order,sr,detrend(forces9)); %filtered_loads (fl)
+s_sensors = [data{:,end-1:end}];
+ma=[0.7874,0;-0.635,-0.7112;-0.635,0.7112]; %moment_arms (ma)
+%% Using K66
 k_matrix = load("k_matrix.mat").K66inv;
-moment_arms=[0.7874,0,0;-0.635,-0.7112,0;-0.635,0.7112,0];
-csv_file_name = "./Sample_Slosh_Data/test248.csv";
-scaling_factors = [100,40,100;100,40,100;100,40,100];
-forces9 = readtable(csv_file_name,"VariableNamingRule","modify",'Range','C:K');
-s_sensors = readtable(csv_file_name,"VariableNamingRule","preserve",'Range','Y:Z');
-fx1 = filter1(cutoff_f,filt_order,sr,detrend(forces9.Fx1));
-fx2 = filter1(cutoff_f,filt_order,sr,detrend(forces9.Fx2));
-fx3 = filter1(cutoff_f,filt_order,sr,detrend(forces9.Fx3));
-fy1 = filter1(cutoff_f,filt_order,sr,detrend(forces9.Fy1));
-fy2 = filter1(cutoff_f,filt_order,sr,detrend(forces9.Fy2));
-fy3 = filter1(cutoff_f,filt_order,sr,detrend(forces9.Fy3));
-fz1 = filter1(cutoff_f,filt_order,sr,detrend(forces9.Fz1));
-fz2 = filter1(cutoff_f,filt_order,sr,detrend(forces9.Fz2));
-fz3 = filter1(cutoff_f,filt_order,sr,detrend(forces9.Fz3));
-v_F_x = fx1 + fx2 + fx3;
-v_F_y = fy1 + fy2 + fy3;
-v_F_z = fz1 + fz2 + fz3;
-v_T_x = fz2 - fz3;
-v_T_y = (-1*fz1*abs(moment_arms(1,1))+(fz2+fz3)*abs(moment_arms(2,1)))/abs(moment_arms(1,1));
-v_T_z = (fx2*abs(moment_arms(2,2))-1*fx3*abs(moment_arms(3,2))+fy1*abs(moment_arms(1,1))-1*(fy2+fy3)*abs(moment_arms(2,1)))/abs(moment_arms(1,1));
+v_F_x = fl(:,1) + fl(:,2) + fl(:,3);
+v_F_y = fl(:,4) + fl(:,5) + fl(:,6);
+v_F_z = fl(:,7) + fl(:,8) + fl(:,9);
+v_T_x = fl(:,9) - fl(:,8);
+v_T_y = (fl(:,8) + fl(:,9))*abs(ma(3,1))/abs(ma(1,1)) - fl(:,7);
+v_T_z = (fl(:,2)-fl(:,3))*abs(ma(3,2))/abs(ma(1,1)) - fl(:,4) - (fl(:,5)+fl(:,6))*abs(ma(3,1))/abs(ma(1,1));
 FT1=k_matrix*[v_F_x,v_F_y,v_F_z,v_T_x,v_T_y,v_T_z]';
-plot(FT1(2,:));
-title("F_y");
-ylabel("Force [N]");
+figure;
+title("K66");
+tiledlayout('flow');
+for i=1:6
+	nexttile;
+	plot(FT1(i,:)-FT1(i,1));
+	title(sprintf("%s - K66",titles(i)));
+	ylabel("Force [N]");
+end
+%% Using K96
+K96 = load("K96.mat").K96;
+forces = K96\forces9';
+figure;
+title("K96");
+tiledlayout('flow');
+for i=1:6
+	nexttile;
+	plot(forces(i,:)-forces(i,1));
+	title(sprintf("%s - K96",titles(i)));
+	ylabel("Force [N]");
+end

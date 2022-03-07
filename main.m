@@ -9,7 +9,7 @@ csvarray = {'Fx_pos_1.csv','Fx_neg_1.csv','Fy_pos_1.csv','Fy_neg_1.csv','Fz_pos_
 caseflag=[1,1,1,1,1,1,1,1,1,1,1,1];
 calsensorflag=[2,2,2,2,2,2,3,3,3,3,3,3];
 sf=10*ones(9,12); %N/V scale factors. each column: [x1;x2;x3;y1;y2;y3;z1;z2;z3]
-% No need to change the following:
+% No need to change the following. 
 % Calibration load cell scale factors (constant)
 sflc1=100; %lbf/V
 sflc2=100; %lbf/V
@@ -93,7 +93,7 @@ end_pts{kk}=[12e3,18e3,47e3,56e3];
 negateflag=[1,-1,1,-1,1,-1,1,1,1,1,1,1];
 close all;
 plotNames = {'Fx1','Fx2','Fx3','Fy1','Fy2','Fy3','Fz1','Fz2','Fz3'};
-for kk=start_idx:end_idx
+for kk=1:1%start_idx:end_idx
 	fh = figure;
 	fh.WindowState = 'maximized';
 	tiledlayout(3,3,"TileSpacing","compact","Padding","compact");
@@ -228,9 +228,9 @@ fs3=abs([0.635,-0.7112,0]);
 Vfx_Ks=sum(K96(1:3,:));
 Vfy_Ks=sum(K96(4:6,:));
 Vfz_Ks=sum(K96(7:9,:));
-Vtx_Ks=K96(8,:)-K96(9,:);
-Vty_Ks=K96(7,:)-(K96(8,:)+K96(9,:))*(fs3(1)/fs1(1)); 
-Vtz_Ks=(K96(3,:)-K96(2,:))*(fs3(2)/fs1(1))-K96(4,:)+(K96(5,:)+K96(6,:))*(fs3(1)/fs1(1));
+Vtx_Ks=K96(9,:)-K96(8,:);
+Vty_Ks=(K96(8,:)+K96(9,:))*(fs3(1)/fs1(1))-K96(7,:);
+Vtz_Ks=(K96(2,:)-K96(3,:))*(fs3(2)/fs1(1))+K96(4,:)-(K96(5,:)+K96(6,:))*(fs3(1)/fs1(1));
 
 K66=[Vfx_Ks;Vfy_Ks;Vfz_Ks;Vtx_Ks;Vty_Ks;Vtz_Ks];
 K66inv=inv(K66); %this is the important matrix
