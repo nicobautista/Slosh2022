@@ -1,5 +1,12 @@
-# Slosh Forces Script
-## Instructions for `main.m`
+# Slosh Testing
+This repository includes the following MATLAB scripts and functions:
+- `main.m`: Finds the K matrix to go from sensor voltages to sytem's forces and torques. This is done after performing the static system calibration of the system using LabVIEW data collected from the 3 three-axis force sensors.
+- `sample_postprocess.m`: This script reads LabVIEW CSVs containing the 9 voltages corresponding to the three axis of the three Kistler force sensors, and uses the K matrix to calculate the net forces and torques of the system.
+- `diagramcreate.m`: This is a MATLAB function that plots a top-down view of the triangular plate and shows the 3 forces acting on each sensor. It also shows the non-calibrated net forces and torques of the system. It takes the X input (S-Sensor force data), Y input (Kistler sensors force data), start points and endpoints of the load steps.
+- `filter1.m`: This is a MATLAB function that filters force data using a Type II Chebyshev filter. It takes the cutoff frequency (in Hz), the order of the filter, sampling rate (Hz), and the detrended data as arguments.
+- `fitline.m`: This is a MATLAB function that creates a linear fit of the s-sensor force data and Kistler sensors force data, and returns the slope as K coefficients. It takes the X input (S-Sensor force data), Y input (Kistler sensors force data), the weigths, and a boolean that determines if the function should (or not) create a plot of the linear fit.
+
+## `main.m`
 This script processes the static system calibration data obtained with LabVIEW to calculate the K-matrix.
 
 ### Section 1: Set parameters
@@ -38,8 +45,26 @@ For instance, when doing Fx+ calibration, the net Fx should be positive. And for
 
 ### Section 7: K-Matrix Creation Section
 This section can only be run if all 12 tests have been performed, meaning that there are 12 CSV files, and all 12 start/end points have been found.
-A K matrix will be created at the end.
+A 9x6 K matrix will be created at the end.
+Save this matrix as "K96.mat".
 
 ### Section 8: Get Matrix Inverse
-This section will invert the matrix found in the previous section. This inverted matrix can be used to obtain the 'calibrated' loads.
-Store this matrix and use it in LabVIEW.
+This section will reshape the matrix found in the previous section into a 6x6 matrix using the equations for `Vfx_Ks`, `Vfy_Ks`, `Vfz_Ks`, `Vtx_Ks`, `Vty_Ks`, and `Vtz_Ks`. This 6x6 matrix will then be inverted to be used to find the 'calibrated' loads.
+Save this matrix as "K66inv.mat".
+
+## `postprocess.m`
+This script reads a CSV file containing the 9-column force data obtained from slosh experiments, detrends and filters this data, and calculates the net forces and torques of the system using the K matrix obtained from `main.m`.
+
+1. Set `sr` to the sampling rate (in Hz).
+2. Set the filter parameters: Cutoff frequency (Hz) using the `cutoff_f` variable, and the order of the filter using the `filt_order` parameter.
+3. Set `csv_file_name` to the path to the CSV file.
+4. Set `percentageToPlot` to the desired percentage (of the time axis) to plot. This will plot half of that amount before the middle point, and the other half after. For example, if 10% is selected and there's 100 data points, it will plot from 45-55.
+5. Run the **Using K66** or the **Using K96** section (or both) to generate a tiled figure including 6 plots corresponding to Fx, Fy, Fz, Tx, Ty and Tz.
+
+### Using K66
+This section uses the 6x6 K matrix to find the net forces and torques of the system.
+It does so by finding Vfx, Vfy, Vfz, Vtx, Vty, and Vtz using Fx1,Fx2,Fx3,Fy1,Fy2,Fy3,Fz1,Fz2,Fz3. It then uses the 6 voltages and the 6x6 inverse K matrix to find the 3 net forces and torques of the system.
+
+### Using K66
+This section uses the 9x6 K matrix to find the net forces and torques of the system.
+It does so by making use of the '\' MATLAB operator to solve the system of linear equations including the 6x1 Force and Torque vector, 9x6 K matrix, and 9x1 Forces (voltages) vector using the least squares method.

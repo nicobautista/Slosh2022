@@ -1,4 +1,4 @@
-function [ dataVec2 ] = filter1( cutoff,order,fs,dataVec )
+function [ dataVec2 ] = filter1(cutoff,order,fs,dataVec)
 %This script simplifies the filtering of the slosh data vectors
     %15-30 is generally a good cutoff frequency
     %7-9 is generally a good order
