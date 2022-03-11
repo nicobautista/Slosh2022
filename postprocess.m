@@ -1,20 +1,21 @@
 % Post-processing:
 close all;clear;clc;
-sr=1000; %sample rate Hz
-cutoff_f = 15;
-filt_order = 5;
-% csv_file_name = "./Sample_Slosh_Data/test248.csv";
-csv_file_name = "C:/Users/nicob/Downloads/je/test250.csv";
+testName = "test250";
+percentageToPlot = 10;
+sr = 1000; % Sample rate [Hz]
+cutoff_f = 15; % Cutoff Frequency [Hz]
+filt_order = 5; % Order of the Filter
+csv_file_name = sprintf("./Sample_Slosh_Data/%s.csv",testName);
+ma=[0.7874,0;-0.635,-0.7112;-0.635,0.7112]; % Moment Arms
 titles = ["Fx","Fy","Fz","Tx","Ty","Tz"];
 units = ["N","N","N","Nm","Nm","Nm"];
+fileNamesCell = readcell("./Filenames.xlsx");
 data = readtable(csv_file_name,"VariableNamingRule","preserve");
 forces9 = [data.Fx1,data.Fx2,data.Fx3,data.Fy1,data.Fy2,data.Fy3,data.Fz1,data.Fz2,data.Fz3];
-fl = filter1(cutoff_f,filt_order,sr,detrend(forces9)); %filtered_loads (fl)
+fl = filter1(cutoff_f,filt_order,sr,detrend(forces9)); % Filtered Loads
 s_sensors = [data{:,end-1:end}];
-ma=[0.7874,0;-0.635,-0.7112;-0.635,0.7112]; %moment_arms (ma)
 dataSize = length(forces9);
 tArray = linspace(0,length(forces9)/sr,length(forces9));
-percentageToPlot = 10;
 %% Using K66
 K66inv = load("K66inv.mat").K66inv;
 v_F_x = fl(:,1) + fl(:,2) + fl(:,3);
