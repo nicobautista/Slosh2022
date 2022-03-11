@@ -3,3 +3,6 @@ EmptyTankFiles/*
 FinalData/*
 Plots/*
 Sample_Slosh_Data/*
+!Plots/slosh_forces-test248.jpeg
+!Sample_Slosh_Data/test258.csv
+!EmptyTankFiles/0.1g-10Hz.csv
