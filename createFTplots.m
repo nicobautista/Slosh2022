@@ -1,4 +1,4 @@
-function createFTplots(ftArray,sr,percentageToPlot,testN,plotBool,saveBool)
+function createFTplots(ftArray,sr,percentageToPlot,testN,testType,loadsToPlot,plotBool,saveBool)
 dataSize = length(ftArray);
 tArray = linspace(0,length(ftArray)/sr,length(ftArray));
 titles = ["Fx","Fy","Fz","Tx","Ty","Tz"];
@@ -8,9 +8,9 @@ if plotBool
 else
 	figure('visible','off','Units','inches','OuterPosition',[0,0,6.5,5]);
 end
-tl = tiledlayout(2,3,'Units','inches','OuterPosition',[0,0,6.5,3.5]);
-title(tl, sprintf("Slosh Loads: test%d",testN));
-for i=1:6
+tl = tiledlayout('flow','Units','inches','OuterPosition',[0,0,6.5,3.5]);
+title(tl, sprintf("%s Loads: test%d",testType,testN));
+for i=loadsToPlot
 	nexttile;
 	plot(tArray,ftArray(i,:)-ftArray(i,1));
 	axis padded;
@@ -22,6 +22,6 @@ end
 tl.TileSpacing = 'tight';
 tl.Padding = 'compact';
 if saveBool
-	exportgraphics(tl,sprintf("./Plots/slosh_forces-test%d.jpeg",testN))
+	exportgraphics(tl,sprintf("./Plots/%s_forces-test%d.jpeg",testType,testN))
 end
 end
