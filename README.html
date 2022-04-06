@@ -1355,7 +1355,7 @@ body,
 <li>(Boolean) <strong>plotBool</strong>: Whether to create plots of the linear fit.</li>
 </ul>
 </li>
-<li><code>getCalibratedLoadsK96.m</code>: Returns an array with the 6 calibrated loads (Fx, Fy, Fz, Tx, Ty, Tz) using the 9 sensor forces (which it filters using <code>filter1.m</code>) and the K96 matrix. It takes the following arguments:
+<li><code>getCalibratedLoadsK96.m</code>: Returns the time array, and an array with the 6 calibrated loads (Fx, Fy, Fz, Tx, Ty, Tz) using the 9 sensor forces (which it filters using <code>filter1.m</code>) and the K96 matrix. It takes the following arguments:
 <ul>
 <li>(Array) <strong>K96</strong>: 9x6 Matrix obtained with <code>calibration.m</code>.</li>
 <li>(String) <strong>filePath</strong>: Path to the CSV file obtained with LabVIEW.</li>
@@ -1397,6 +1397,7 @@ body,
 </li>
 <li><code>createTFplots.m</code>: Creates and/or saves a tiled layout of the calibrated forces and torques. It takes the following parameters.
 <ul>
+<li>(Vector) <strong>tArray</strong>: Time vector in seconds.</li>
 <li>(Array) <strong>ftArray</strong>: Array of the calibrated forces and torques.</li>
 <li>(Int) <strong>sr</strong>: Sampling rate in Hz.</li>
 <li>(Int) <strong>percentageToPlot</strong>: Percentage of the total data to trim the x axis of the plot (0-100).</li>
@@ -1404,6 +1405,15 @@ body,
 <li>(String) <strong>testType</strong>: String for formatting the plot title depending on what is being plotted (e.g., &quot;System&quot;, &quot;Slosh&quot;).</li>
 <li>(Vector) <strong>loadsToPlot</strong>: Vector including the loads to include in the layout (where [1,2,3,4,5,6] corresponds to [Fx,Fy,Fz,Tx,Ty,Tz]). (E.g., If plotting all 6: loadsToPlot=[1,2,3,4,5,6], if plotting only Fx and Ty: loadsToPlot=[1,5]).</li>
 <li>(Boolean) <strong>plotBool</strong>: Whether to create a window displaying the loads. If looping for several tests, it's recommended to set it to 'false'.</li>
+<li>(Boolean) <strong>saveBool</strong>: Whether save the figure as a 'jpeg' image to storage. If set to 'true', it saves the images to './Plots/'.</li>
+</ul>
+</li>
+<li><code>processAcceleration.m</code>: Returns and creates/saves a plot of the acceleration. It takes the following parameters.
+<ul>
+<li>(String) <strong>csv_file_path</strong>: Path to the CSV file containing the time and acceleration data.</li>
+<li>(Vector) <strong>filterParams</strong>: Parameters of the filter in a vector ([Sample Rate in Hz, Cutoff Frequency in Hz, Order of the filter]).</li>
+<li>(Int) <strong>testN</strong>: Test number.</li>
+<li>(Boolean) <strong>plotBool</strong>: Whether to create a window displaying the plot. If looping for several tests, it's recommended to set it to 'false'.</li>
 <li>(Boolean) <strong>saveBool</strong>: Whether save the figure as a 'jpeg' image to storage. If set to 'true', it saves the images to './Plots/'.</li>
 </ul>
 </li>

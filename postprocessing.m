@@ -9,6 +9,8 @@ loadsToPlotSystem = 1:6;
 plotBoolSlosh = false; %Wether to create a window showing the plot
 saveBoolSlosh = false; %Whether to save the plot to storage
 loadsToPlotSlosh = [1,5];
+plotBoolAcc = false; %Wether to create a window showing the plot
+saveBoolAcc = false; %Whether to save the plot to storage
 sr = 1000; % Sample rate [Hz]
 cutoff_f = 15; % Cutoff Frequency [Hz]
 filt_order = 5; % Order of the Filter
@@ -24,10 +26,8 @@ for n = 248:250
 	if ~ismember(n,grayTestNumbers)
 		testName = sprintf("test%d",n);
 		csv_file_name = sprintf("./Slosh_Data/%s.csv",testName);
-		data = readtable(csv_file_name,"VariableNamingRule","preserve");
-	% 	s_sensors = [data{:,end-1:end}]; %Not used for anything atm
-		ftArray = getCalibratedLoadsK96(K96, csv_file_name, filterParams, 1);
-		createFTplots(ftArray,sr,percentageToPlot,n,"System",loadsToPlotSystem,plotBoolSystem,saveBoolSystem);
+		[tStamps, ftArray] = getCalibratedLoadsK96(K96, csv_file_name, filterParams, 1);
+		createFTplots(tStamps,ftArray,sr,percentageToPlot,n,"System",loadsToPlotSystem,plotBoolSystem,saveBoolSystem);
 		[thFreq, thAcc, thDoubleAmp, thFill] = getThFreqAccDoubleAmpFill(testName, fileNamesCell, logParamsBool);
 		empty_file = sprintf("%s%gg-%gHz.csv",empty_files_path,thAcc,thFreq);
 		idxs = findStartEndCycles(ftArray, thFreq, sr, false);
@@ -37,13 +37,12 @@ for n = 248:250
 		ssStart = startIdx+ceil(0.5*0.01*(100-ssPercentage)*cyclesDuration);
 		ssEnd = endIdx-floor(0.5*0.01*(100-ssPercentage)*cyclesDuration);
 		ssLoads = ftArray(:,ssStart:ssEnd); %Loads with liquid
-	% 	freq = FFT_natfreq(ssLoads(1,:),sr); %Measured Frequency - Not used for anything atm
-		% nb_cycl = cyclesPerFreq(2,cyclesPerFreq(1,:)==thFreq); %Number of cycles for each test
 		singleCycleDuration = sr/thFreq; % # of data pts
 		singleEmptyCycle = getSingleEmptyTankCycle(K96,singleCycleDuration,thFreq,empty_file,filterParams);
 		ssEmptyTankLoads = repmat(singleEmptyCycle,1,1+ceil(length(ssLoads)/singleCycleDuration));
 		reshapedData = reshapeEmptyData(ssEmptyTankLoads, ssLoads, thFreq, sr); %Empty Loads
 		sloshResults = ssLoads-reshapedData;
-		createFTplots(sloshResults,sr,percentageToPlot,n,"Slosh",loadsToPlotSlosh,plotBoolSlosh,saveBoolSlosh);
+		createFTplots(tStamps,sloshResults,sr,percentageToPlot,n,"Slosh",loadsToPlotSlosh,plotBoolSlosh,saveBoolSlosh);
+		filtered_acc = processAcceleration(csv_file_name,filterParams,n,plotBoolAcc,saveBoolAcc);
 	end
 end

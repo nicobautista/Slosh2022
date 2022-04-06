@@ -18,7 +18,7 @@ This repository includes the following MATLAB scripts and functions.
   * (Vector) **y**: Kistler sensors force data.
   * (Vector) **weights**: Weights for the fit.
   * (Boolean) **plotBool**: Whether to create plots of the linear fit.
-* `getCalibratedLoadsK96.m`: Returns an array with the 6 calibrated loads (Fx, Fy, Fz, Tx, Ty, Tz) using the 9 sensor forces (which it filters using `filter1.m`) and the K96 matrix. It takes the following arguments:
+* `getCalibratedLoadsK96.m`: Returns the time array, and an array with the 6 calibrated loads (Fx, Fy, Fz, Tx, Ty, Tz) using the 9 sensor forces (which it filters using `filter1.m`) and the K96 matrix. It takes the following arguments:
   * (Array) **K96**: 9x6 Matrix obtained with `calibration.m`.
   * (String) **filePath**: Path to the CSV file obtained with LabVIEW.
   * (Vector) **filterParams**: Parameters of the filter in a vector ([Sample Rate in Hz, Cutoff Frequency in Hz, Order of the filter]).
@@ -44,6 +44,7 @@ This repository includes the following MATLAB scripts and functions.
   * (Float) **theFreq**: Target frequency of the test in Hz, obtained with `getThFreqAccDoubleAmpFill.m`.
   * (Int) **sr**: Sample rate in Hz.
 * `createTFplots.m`: Creates and/or saves a tiled layout of the calibrated forces and torques. It takes the following parameters.
+  * (Vector) **tArray**: Time vector in seconds.
   * (Array) **ftArray**: Array of the calibrated forces and torques.
   * (Int) **sr**: Sampling rate in Hz.
   * (Int) **percentageToPlot**: Percentage of the total data to trim the x axis of the plot (0-100).
@@ -51,4 +52,10 @@ This repository includes the following MATLAB scripts and functions.
   * (String) **testType**: String for formatting the plot title depending on what is being plotted (e.g., "System", "Slosh").
   * (Vector) **loadsToPlot**: Vector including the loads to include in the layout (where [1,2,3,4,5,6] corresponds to [Fx,Fy,Fz,Tx,Ty,Tz]). (E.g., If plotting all 6: loadsToPlot=[1,2,3,4,5,6], if plotting only Fx and Ty: loadsToPlot=[1,5]).
   * (Boolean) **plotBool**: Whether to create a window displaying the loads. If looping for several tests, it's recommended to set it to 'false'.
+  * (Boolean) **saveBool**: Whether save the figure as a 'jpeg' image to storage. If set to 'true', it saves the images to './Plots/'.
+* `processAcceleration.m`: Returns and creates/saves a plot of the acceleration. It takes the following parameters.
+  * (String) **csv_file_path**: Path to the CSV file containing the time and acceleration data.
+  * (Vector) **filterParams**: Parameters of the filter in a vector ([Sample Rate in Hz, Cutoff Frequency in Hz, Order of the filter]).
+  * (Int) **testN**: Test number.
+  * (Boolean) **plotBool**: Whether to create a window displaying the plot. If looping for several tests, it's recommended to set it to 'false'.
   * (Boolean) **saveBool**: Whether save the figure as a 'jpeg' image to storage. If set to 'true', it saves the images to './Plots/'.

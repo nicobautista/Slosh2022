@@ -1,6 +1,5 @@
-function createFTplots(ftArray,sr,percentageToPlot,testN,testType,loadsToPlot,plotBool,saveBool)
+function createFTplots(tArray,ftArray,sr,percentageToPlot,testN,testType,loadsToPlot,plotBool,saveBool)
 dataSize = length(ftArray);
-tArray = linspace(0,length(ftArray)/sr,length(ftArray));
 titles = ["Fx","Fy","Fz","Tx","Ty","Tz"];
 units = ["N","N","N","Nm","Nm","Nm"];
 if plotBool
@@ -22,6 +21,6 @@ end
 tl.TileSpacing = 'tight';
 tl.Padding = 'compact';
 if saveBool
-	exportgraphics(tl,sprintf("./Plots/%s_forces-test%d.jpeg",testType,testN))
+	exportgraphics(tl,sprintf("./Plots/%s_forces-test%d.jpeg",testType,testN));
 end
 end

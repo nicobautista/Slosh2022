@@ -7,8 +7,10 @@ This script uses the K96 matrix obtained from `calibration.m` to process the CSV
   * (Boolean) **logParamsBool**: Whether to print to the console the parameters of each file that is being processed (true/false).
   * (Boolean) **plotBoolSystem**: Whether to create a window displaying the loads of the system. If looping for several tests, it's recommended to set it to 'false'.
   * (Boolean) **plotBoolSlosh**: Whether to create a window displaying the loads caused by the liquid. If looping for several tests, it's recommended to set it to 'false'.
+  * (Boolean) **plotBoolAcc**: Whether to create a window displaying the plot of the accelerometer. If looping for several tests, it's recommended to set it to 'false'.
   * (Boolean) **saveBoolSystem**: Whether save the figure of the loads of the system as a 'jpeg' image to storage. If set to 'true', it saves the images to './Plots/'.
   * (Boolean) **saveBoolSlosh**: Whether save the figure of the loads caused by the liquid as a 'jpeg' image to storage. If set to 'true', it saves the images to './Plots/'.
+  * (Boolean) **saveBoolAcc**: Whether save the plot of the accelerometer as a 'jpeg' image to storage. If set to 'true', it saves the images to './Plots/'.
   * (Vector) **loadsToPlotSystem**: Vector including the loads to include in the plot of the system loads (where [1,2,3,4,5,6] corresponds to [Fx,Fy,Fz,Tx,Ty,Tz]). (E.g., If plotting all 6: loadsToPlot=[1,2,3,4,5,6], if plotting only Fx and Ty: loadsToPlot=[1,5]).
   * (Vector) **loadsToPlotSlosh**: Vector including the loads to include in the plot of the loads caused by the liquid (where [1,2,3,4,5,6] corresponds to [Fx,Fy,Fz,Tx,Ty,Tz]). (E.g., If plotting all 6: loadsToPlot=[1,2,3,4,5,6], if plotting only Fx and Ty: loadsToPlot=[1,5]).
   * (Int) **sr**: Sampling rate in Hz.
@@ -27,7 +29,7 @@ This script uses the K96 matrix obtained from `calibration.m` to process the CSV
   * The following will iterate for all tests.
     * The if statement inside the for loop will make the script ignore the CSVs in `grayTestNumbers`.
     * The script uses `readtable` to import force data from the CSVs.
-    * This force data is then passed to `getCalibratedLoadsK96` where it's detrended, filtered, and converted to a 6 column array containing Fx,Fy,Fz,Tx,Ty,Tz. This is stored in `ftArray`.
+    * This force data is then passed to `getCalibratedLoadsK96` where it's detrended, filtered, and converted to a 6 column array containing Fx,Fy,Fz,Tx,Ty,Tz. This is stored in `ftArray`. This function also stores the time array into `tStamps`.
     * The `createFTplots` function is then used to plot/save this data.
     * Using `getThFreqAccDoubleAmpFill`, the target frequency, acceleration, double amplitude, and fill percentage are stored in `thFreq`, `thAcc`, `thDoubleAmp`, and `thFill`.
     * The CSV file name for the empty tank log is obtained using `empty_files_path`, `thFreq`, and `thAcc`. It is stored in `empty_file`.
@@ -38,3 +40,4 @@ This script uses the K96 matrix obtained from `calibration.m` to process the CSV
 	* This data is then used to create a repeated array of greater length than `ssLoads`. This is then modified to match the length of `ssLoads`, and to also match the peaks. This is stored in `reshapedData`.
 	* The liquid forces are obtained by subtracting `reshapedData` from `ssLoads`.
 	* The `createFTplots` function is then used to plot/save this data.
+	* The `processAcceleration` function is finally used to read, detrend, and filter the acceleration to plot it against time. The function stores the detrended and filtered acceleration to the `filtered_acc` variable.
