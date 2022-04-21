@@ -43,7 +43,6 @@ for n = 129
 		ssLoads = getSSFilledTankLoads(filledTankLoads, thFreq, sr);
 		[maxAmpls, minAmpls,rawEmptyCycles] = getEmptyCyclesAmplitudes(K96,thFreq,empty_file,filterParams);
 		ssEmptyTankLoads = getEmptyTankLoads(maxAmpls,minAmpls,thFreq,sr,tStamps(end));
-		ssEmptyTankLoads([3,6],:) = -1*ssEmptyTankLoads([3,6],:);
 		[reshapedData, startIdxTrimmed, endIdxTrimmed] = reshapeEmptyData(ssEmptyTankLoads, ssLoads, thFreq, sr); %Empty Loads
 		tStampsTrimmed = tStamps(startIdxTrimmed:endIdxTrimmed);
 		sloshResults = ssLoads-reshapedData;
