@@ -3,6 +3,10 @@ sr = filterParams(1);
 cutoff_f = filterParams(2);
 filt_order = filterParams(3);
 data = readtable(csv_file_path,"DatetimeType","text","VariableNamingRule","preserve");
+if ~ismember('Accelerometer',data.Properties.VariableNames)
+	filtered_a = 0;
+	return
+end
 raw_a = data.Accelerometer;
 t = data.time - data.time(1);
 filtered_a = filter1(cutoff_f,filt_order,sr,detrend(raw_a));
