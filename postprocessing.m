@@ -11,7 +11,7 @@ saveBoolSlosh = false; %Whether to save the plot to storage
 loadsToPlotSlosh = [1,4];
 plotBoolAcc = false; %Wether to create a window showing the plot
 saveBoolAcc = false; %Whether to save the plot to storage
-loadsToPlotCombined = [1:6];
+loadsToPlotCombined = 1:6;
 plotBoolCombined = false; %Wether to create a window showing the plot
 saveBoolCombined = true; %Whether to save the plot to storage
 sr = 1000; % Sample rate [Hz]
@@ -25,7 +25,7 @@ cyclesPerFreq = [0.1,0.5,1:10;60,100,100,60*(2:10)];
 filterParams = [sr,cutoff_f,filt_order];
 grayTestNumbers = [61,62,103,104,109:115];
 % ----------------------
-for n = 129
+for n = [123,124,132,133]
 	if ~ismember(n,grayTestNumbers)
 		testName = sprintf("test%d",n);
 		[thFreq, thAcc, thDoubleAmp, thFill] = getThFreqAccDoubleAmpFill(testName, fileNamesCell, logParamsBool);
@@ -47,7 +47,7 @@ for n = 129
 		tStampsTrimmed = tStamps(startIdxTrimmed:endIdxTrimmed);
 		sloshResults = ssLoads-reshapedData;
 		createFTplots(tStampsTrimmed,sloshResults(loadsToPlotSlosh,:),sr,percentageToPlot,n,"Slosh",loadsToPlotSlosh,plotBoolSlosh,saveBoolSlosh,'b',"");
-		createFTplots(tStampsTrimmed,cat(3,ssLoads(loadsToPlotCombined,:),sloshResults(loadsToPlotCombined,:),reshapedData(loadsToPlotCombined,:)),sr,percentageToPlot,n,"AllLoads",loadsToPlotCombined,plotBoolCombined,saveBoolCombined,['g','k','b'],["Total Loads","Empty Tank Loads","Liquid Loads"]);
+		createFTplots(tStampsTrimmed,cat(3,ssLoads(loadsToPlotCombined,:),sloshResults(loadsToPlotCombined,:),reshapedData(loadsToPlotCombined,:)),sr,percentageToPlot,n,"AllLoads",loadsToPlotCombined,plotBoolCombined,saveBoolCombined,['g','b','k'],["Total Loads","Liquid Loads","Empty Tank Loads"]);
 		filtered_acc = processAcceleration(csv_file_name,filterParams,n,plotBoolAcc,saveBoolAcc);
 	end
 end
