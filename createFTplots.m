@@ -5,7 +5,7 @@ units = ["N","N","N","Nm","Nm","Nm"];
 if plotBool
 	figure('OuterPosition',[0,0,1350,900]);
 elseif saveBool
-	figure('visible','off','OuterPosition',[0,0,1350,900]);
+	figure('visible','off','Units','inches','OuterPosition',[0,0,6.3,3.75]);
 end
 if plotBool || saveBool
 	tl = tiledlayout('flow');

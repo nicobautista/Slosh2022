@@ -8,7 +8,7 @@ csvarray = {'Fx_pos_1.csv','Fx_neg_1.csv','Fy_pos_1.csv','Fy_neg_1.csv','Fz_pos_
 			'Tx_pos_3.csv','Tx_neg_1.csv','Ty_pos_1.csv','Ty_neg_1.csv','Tz_pos_1.csv','Tz_neg_1.csv'};
 caseflag=[1,1,1,1,1,1,1,1,1,1,1,1];
 calsensorflag=[2,2,2,2,2,2,3,3,3,3,3,3];
-sf=10*ones(9,12); %N/V scale factors. each column: [x1;x2;x3;y1;y2;y3;z1;z2;z3]
+sf=1*ones(9,12); %N/V scale factors. each column: [x1;x2;x3;y1;y2;y3;z1;z2;z3]
 % No need to change the following. 
 % Calibration load cell scale factors (constant)
 sflc1=100; %lbf/V
