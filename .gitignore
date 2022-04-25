@@ -1,8 +1,11 @@
 .vscode
+TableSCs/*
 EmptyTankFiles/*
 FinalData/*
 Plots/*
 Slosh_Data/*
+Position/*
 !Plots/slosh_forces-test248.jpeg
 !Sample_Slosh_Data/test258.csv
 !EmptyTankFiles/0.1g-10Hz.csv
+Report_Plots.docx

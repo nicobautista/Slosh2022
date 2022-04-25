@@ -6,6 +6,8 @@ for ul = 1:2 %First upper then lower
 	for i = 1:size(ftArray,1)
 		[pks,~]=findpeaks(ftArray(i,:),'MinPeakHeight',0);
 		[peaksValues{ul,i},peaksIdx{ul,i}]=findpeaks(ftArray(i,:),'MinPeakHeight',0.85*mean(pks),'MinPeakDistance',0.85*sr/thFreq,'MinPeakProminence',0.2*(max(ftArray(i,:))-min(ftArray(i,:))));
+		[~, id] = lastwarn;
+		warning('off',id)
 		if ul == 2
 			peaksValues{ul,i} = -1*peaksValues{ul,i};
 		end
