@@ -1,8 +1,14 @@
-function [timeArray,ftArray] = getCalibratedLoadsK96(K96, filePath, filterParams, sf)
+function [timeArray,ftArray, accelerationVector] = getCalibratedLoadsK96(K96, filePath, filterParams, sf)
 sr = filterParams(1);
 cutoff_f = filterParams(2);
 filt_order = filterParams(3);
 data = readtable(filePath,"DatetimeType","text","VariableNamingRule","preserve");
+if ~ismember('Accelerometer',data.Properties.VariableNames)
+	accelerationVector = "";
+else
+	raw_a = data.Accelerometer;
+	accelerationVector = filter1(cutoff_f, filt_order, sr, detrend(raw_a));
+end
 if ismember('time',data.Properties.VariableNames)
 	timeArray = data.time - data.time(1);
 else

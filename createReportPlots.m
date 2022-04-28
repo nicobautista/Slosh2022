@@ -1,7 +1,4 @@
-function createReportPlots(posT, position, loadsT, loads, ssT, ssLoads, emptyLoads, testName, fillLevel, thAcc, thFreq)
-% dataSizeLoads = length(ssLoads);
-% titles = ["Fx","Fy","Fz","Tx","Ty","Tz"];
-% units = ["N","N","N","Nm","Nm","Nm"];
+function createReportPlots(posT, position, acceleration, ssT, ssLoads, emptyLoads, testName, fillLevel, thAcc, thFreq)
 if ~exist(sprintf("./Plots/Report/%s",testName),'dir')
 	mkdir(sprintf("./Plots/Report/%s",testName));
 end
@@ -11,7 +8,9 @@ plotTitles = ["Position and Acceleration", "F_x Force", "F_y and F_z Forces", "T
 imageNames = ["position_acceleration", "fx", "fyz", "txz", "ty","three_loads_fx","three_loads_ty"];
 [posIdxs,~] = findPeaks(position',thFreq,1000,false);
 plotTs = {posT(posIdxs{1}(1):posIdxs{1}(end)),ssT};
-plotYs = {[position(posIdxs{1}(1):posIdxs{1}(end)), ((2*pi*thFreq)^2)*(1/9.81)*0.5*position(posIdxs{1}(1):posIdxs{1}(end))],loads(1,:)',loads(2:3,:)',loads([4,6],:)',loads(5,:)',[emptyLoads(1,:)',ssLoads(1,:)'-emptyLoads(1,:)',ssLoads(1,:)'],[emptyLoads(5,:)',ssLoads(5,:)'-emptyLoads(5,:)',ssLoads(5,:)']};
+if acceleration == ""
+	acceleration = ((2*pi*thFreq)^2)*(1/9.81)*0.5*position(posIdxs{1}(1):posIdxs{1}(end));
+plotYs = {[position(posIdxs{1}(1):posIdxs{1}(end)), acceleration],ssLoads(1,:)',ssLoads(2:3,:)',ssLoads([4,6],:)',ssLoads(5,:)',[emptyLoads(1,:)',ssLoads(1,:)'-emptyLoads(1,:)',ssLoads(1,:)'],[emptyLoads(5,:)',ssLoads(5,:)'-emptyLoads(5,:)',ssLoads(5,:)']};
 for i=1:7
 	pa_fig = figure('visible','off','OuterPosition',[0,0,1620,900]);
 	plotTitle = sprintf("%s: FL = %d%%, a = %g g's, f = %g Hz",plotTitles(i),fillLevel,thAcc,thFreq);

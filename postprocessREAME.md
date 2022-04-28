@@ -1,43 +1,43 @@
 # **postprocess.m**
 This script uses the K96 matrix obtained from `calibration.m` to process the CSV files obtained from LabVIEW during the slosh experiments. It creates plots for the forces and torques of the system, and of the liquid only.
+The following directories need to contain the following files:
+* **'Slosh Data' directory:** CSV files from the experiments
+* **'EmptyTankFiles' directory:** CSV files from the empty-tank experiments
+* **'Position' directory:** Position txt files.
+
+A file named 'Filenames.xlsx' containing the testnames tabulated against frequency, fill percentage and acceleration needs to exist inside the main directory.
+
+## Important:
+Some loads from the sensors in the CSV files aren't oriented correctly since the mounting of the three sensors is not the same for the 3 of them. The function `getCalibratedLoadsK96.m` takes care of orienting these loads correctly by multiplying individual columns by -1 (line 16). However, before starting postprocessing, it is important to verify that the orientations are correct. To verify this, plot Fx1, Fx2, and Fx3 (from the CSV file) together and verify that they are oriented correctly. The same applies for Fy and Fz. If they are not oriented correctly, edit line 16 accordingly.
 
 ## Parameters:
-  * (Int) **percentageToPlot**: Percentage of the total data to trim the x axis of the plot (0-100).
   * (Int) **ssPercentage**: Percentage of what is considered to be the steady state portion of the entire cycles.
   * (Boolean) **logParamsBool**: Whether to print to the console the parameters of each file that is being processed (true/false).
-  * (Boolean) **plotBoolSystem**: Whether to create a window displaying the loads of the system. If looping for several tests, it's recommended to set it to 'false'.
-  * (Boolean) **plotBoolSlosh**: Whether to create a window displaying the loads caused by the liquid. If looping for several tests, it's recommended to set it to 'false'.
-  * (Boolean) **plotBoolAcc**: Whether to create a window displaying the plot of the accelerometer. If looping for several tests, it's recommended to set it to 'false'.
-  * (Boolean) **saveBoolSystem**: Whether save the figure of the loads of the system as a 'jpeg' image to storage. If set to 'true', it saves the images to './Plots/'.
-  * (Boolean) **saveBoolSlosh**: Whether save the figure of the loads caused by the liquid as a 'jpeg' image to storage. If set to 'true', it saves the images to './Plots/'.
-  * (Boolean) **saveBoolAcc**: Whether save the plot of the accelerometer as a 'jpeg' image to storage. If set to 'true', it saves the images to './Plots/'.
-  * (Vector) **loadsToPlotSystem**: Vector including the loads to include in the plot of the system loads (where [1,2,3,4,5,6] corresponds to [Fx,Fy,Fz,Tx,Ty,Tz]). (E.g., If plotting all 6: loadsToPlot=[1,2,3,4,5,6], if plotting only Fx and Ty: loadsToPlot=[1,5]).
-  * (Vector) **loadsToPlotSlosh**: Vector including the loads to include in the plot of the loads caused by the liquid (where [1,2,3,4,5,6] corresponds to [Fx,Fy,Fz,Tx,Ty,Tz]). (E.g., If plotting all 6: loadsToPlot=[1,2,3,4,5,6], if plotting only Fx and Ty: loadsToPlot=[1,5]).
   * (Int) **sr**: Sampling rate in Hz.
-  * (Float) **cutoff_f**: Cutoff frequency of the filter in Hz.
   * (Int) **filt_order**: Order of the filter.
   * (Array) **K96**: 9x6 matrix obtained from `calibration.m`. Change the path to this file if needed.
+  * (Array) **K66inv**: Inverse 6x6 matrix obtained from `calibration.m`. Change the path to this file if needed.
   * (Cell) **fileNamesCell**: Cell containing the data read from "Filenames.xlsx". Change the path to this file if needed.
-  * (String) **empty_files_path**: Path to where the empty tank CSVs are.
+  * (String) **empty_files_path**: Path to the empty tank CSVs.
+  * (String) **pos_files_path**: Path to the position txt files.
   * (Array) **ma**: Moment arms for the three sensors. No need to change unless the force sensors are mounted elsewhere in the system.
   * (Array) **cyclesPerFreq**: Array relating the frequency of the test (in Hz) to the number of cycles performed at that frequency.
-  * (Vector) **filterParams**: Vector including the sampling rate, cutoff frequency, and order of the filter.
   * (Vector) **grayTestNumbers**: Vector including the test numbers to not process.
+  * (Vector) **cutoffFreqs**: Cutoff frequencies (in Hz) for the filter related to the experiment frequencies [0.1, 0.5, 1, 2, 3, 4, 5, 6, 7 , 8, 9, 10] also in Hz.
+  * (Vector) **filterParams**: Vector including the sampling rate, cutoff frequency, and order of the filter.
 
 ## Processing
   * Change the for loop range to iterate over the desired range of tests.
   * The following will iterate for all tests.
     * The if statement inside the for loop will make the script ignore the CSVs in `grayTestNumbers`.
-    * The script uses `readtable` to import force data from the CSVs.
-    * This force data is then passed to `getCalibratedLoadsK96` where it's detrended, filtered, and converted to a 6 column array containing Fx,Fy,Fz,Tx,Ty,Tz. This is stored in `ftArray`. This function also stores the time array into `tStamps`.
-    * The `createFTplots` function is then used to plot/save this data.
     * Using `getThFreqAccDoubleAmpFill`, the target frequency, acceleration, double amplitude, and fill percentage are stored in `thFreq`, `thAcc`, `thDoubleAmp`, and `thFill`.
+    * Based on `thFreq`, the cutoff frequency is assigned based on `cutoffFreqs`.
+    * The position and time vector of the linear encoder are store in `posVector` and `tVectorPos`, respectively.
+    * `getCalibratedLoadsK96` is used to read the CSV file with the experimental data. Inside this function, this data is detrended, filtered, and converted to a 6 column array (using K96) containing Fx,Fy,Fz,Tx,Ty,Tz. This is stored in `ftArray`. This function also stores the time array into `tStamps`, and the acceleration vector to `accVector`. If the CSV file has no acceleration column, it will set `accVector` to an empty string ("").
     * The CSV file name for the empty tank log is obtained using `empty_files_path`, `thFreq`, and `thAcc`. It is stored in `empty_file`.
-    * The location of the peaks of `ftArray` are obtained using the `findStartEndCycles` function. This provides information of when the cycles begin and when they end.
-    * Using the location of the beginning and the end of the cycles, the location of the beginning and end of the 'steady state' cycles is obtained by making use of `ssPercentage`. These indexes are saved in `ssStart` and `ssEnd`, and the steady state portion of the data is saved in `ssLoads`.
-    * The duration of a single cycle (in number of data points) is obtained using the sample rate and the target frequency. This value is stored in `singleCycleDuration`.
-	* Using `getSimpleEmptyTankCycle`, a single cycle of the empty tank data is stored in `singleEmptyCycle`.
-	* This data is then used to create a repeated array of greater length than `ssLoads`. This is then modified to match the length of `ssLoads`, and to also match the peaks. This is stored in `reshapedData`.
-	* The liquid forces are obtained by subtracting `reshapedData` from `ssLoads`.
-	* The `createFTplots` function is then used to plot/save this data.
-	* The `processAcceleration` function is finally used to read, detrend, and filter the acceleration to plot it against time. The function stores the detrended and filtered acceleration to the `filtered_acc` variable.
+    * `getSSFilledTankLoads` uses the 6-column array obtained from `getCalibratedLoadsK96`, trims it according to `ssPercentage`, and stores it in `ssLoads`.
+	* Using `getEmptyCyclesAmplitudes`, the amplitudes of the empty-tank datasets are obtained.
+	* These amplitudes are then used to create sinousoidal datasets corresponding to the frequency of the experiment using `getEmptyTankLoads.m`.
+	* `reshapeEmptyData.m` is used to trim the empty-tank dataset to match `ssLoads`. This data is stored in `reshapedData`.
+	* The liquid forces are obtained by subtracting `reshapedData` from `ssLoads`. This is stored in `sloshResults`.
+	* Finally, `createReportPlots` creates 14 plots per test and stores them as png images in './Plots/Report/{testName}'. These images are then used to create the report with the `docBuilder.py` Python script.

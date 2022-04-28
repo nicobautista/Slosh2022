@@ -1,6 +1,12 @@
 # **calibration.m**
 This script processes the static system calibration data obtained with LabVIEW to calculate the K-matrix.
 
+The following directories need to contain the following files:
+* **'FinalData' directory:** CSV files from calibration. This should include Fx+, Fx-, Fy+, Fy-, Fz+, Fz-, Tx+, Tx-, Ty+, Ty-, Tz+, and Tz-.
+
+## Important:
+Some loads from the sensors in the CSV files aren't oriented correctly since the mounting of the three sensors is not the same for the 3 of them. Line 32 takes care of orienting these loads correctly by multiplying individual columns by -1. However, before generating the K matrix, it is important to verify that the orientations are correct. To verify this, plot Fx1, Fx2, and Fx3 (from the CSV file) together and verify that they are oriented correctly. The same applies for Fy and Fz. If they are not oriented correctly, edit line 16 accordingly.
+
 ## Section 1: Set parameters
 This section is used to set parameters and flags for the script to use in the following sections.
 1. If using the script to test a single CSV, set `singleFileBool` to `true`. Otherwise, set it to `false`.

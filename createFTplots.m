@@ -1,4 +1,4 @@
-function createFTplots(tArray,ftArray,sr,percentageToPlot,testN,testType,loadsToPlot,plotBool,saveBool,plotColor,legendStrings,fillAccFreq)
+function createFTplots(tArray,ftArray,sr,percentageToPlot,testN,testType,loadsToPlot,plotBool,saveBool,plotColor,legendStrings)
 dataSize = length(ftArray);
 titles = ["Fx","Fy","Fz","Tx","Ty","Tz"];
 units = ["N","N","N","Nm","Nm","Nm"];

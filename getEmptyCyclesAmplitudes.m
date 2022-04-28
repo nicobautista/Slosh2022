@@ -1,10 +1,10 @@
-function [maxPeaks,minPeaks,rawEmptyCycles] = getEmptyCyclesAmplitudes(K96,thFreq,emptyTest,filterParams)
+function [maxPeaks,minPeaks,emptyLoads] = getEmptyCyclesAmplitudes(K96,thFreq,emptyTest,filterParams)
 sr = filterParams(1);
-[~,rawEmptyCycles] = getCalibratedLoadsK96(K96, emptyTest, filterParams,1);
-% [~,rawEmptyCycles] = getCalibratedLoadsK66(K96, emptyTest, filterParams,1);
+[~,emptyLoads,~] = getCalibratedLoadsK96(K96, emptyTest, filterParams,1);
+% [~,emptyLoads] = getCalibratedLoadsK66(K96, emptyTest, filterParams,1);
 for i = 1:2
 	if i == 1
-		[hlIdxs,hlPeaks] = findPeaks(rawEmptyCycles, thFreq, sr, false);
+		[hlIdxs,hlPeaks] = findPeaks(emptyLoads, thFreq, sr, false);
 		startEnd = zeros(2,size(hlIdxs,2)-1);
 		for j = 1:size(hlIdxs,2)
 			if j ~= 6 && size(hlIdxs{2,j},2) ~= 0 && size(hlIdxs{1,j},2) ~= 0
@@ -22,9 +22,9 @@ for i = 1:2
 		endIdx = max(startEnd(2,:));
 		dataLength = endIdx-startIdx;
 	else
-		hlPeaks = cell(2,size(rawEmptyCycles,1));
-		for j = 1:size(rawEmptyCycles,1)
-			[~,hlPeaks(:,j)] = findPeaks(detrend(detrend(rawEmptyCycles(j,ceil(startIdx+0.1*dataLength):floor(endIdx-0.1*dataLength))),1), thFreq, sr, false);
+		hlPeaks = cell(2,size(emptyLoads,1));
+		for j = 1:size(emptyLoads,1)
+			[~,hlPeaks(:,j)] = findPeaks(detrend(detrend(emptyLoads(j,ceil(startIdx+0.1*dataLength):floor(endIdx-0.1*dataLength))),1), thFreq, sr, false);
 		end
 	end
 end
